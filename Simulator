@@ -1,0 +1,72 @@
+import java.util.ArrayList;
+import java.util.Collections;
+
+/**
+ *
+ * @author 12248257
+ */
+public class Simulator implements IScheduler {
+
+    private ArrayList<Event> events;
+    private int clock;
+    private ShopModel model;
+
+    // pass the ShopModel into Simulator constructor
+    //by decalering the model variable wuth ShopModel type
+    public Simulator(ShopModel model) {
+        this.model = model;
+        events = new ArrayList<>();
+        clock = 0;
+    }
+
+    public void initialize(ArrayList<Event> e) {
+        // using addAll()method to add all element that e variable collected from the Event class  
+        events.addAll(e);
+
+    }
+
+    public void run(int stopTime) {
+
+        // if events is null or empty return??
+        if (events == null || events.isEmpty()) {
+            return;
+        }
+        // declare e variable with Event type remove the index 0
+        Event e = events.remove(0);
+
+        // e get time from Event class assign to clock variable
+        clock = e.getTime();
+       
+        // print the header
+        System.out.printf("Simulation trace:%n=================%n");
+        
+        // events queue will never become empty as after the first event is added
+        //every arrival event will generate a new arrival event which may be greater than the stop time
+        // while loop the clock time if clock less than stopTime
+        // invoke the process method in ArrivalEvent class
+        while (clock <= stopTime) {
+            //the 'this' argument means that 
+            //we are passing a refernece to this simulator object to the event's process method
+            e.process(model, this);  
+            e = events.remove(0);
+            clock = e.getTime();
+        }
+    }
+
+    // add event into ArrayList<event>
+    @Override
+    public void schedule(Event event) {
+        int index = 0;
+        for (Event e : events) {
+            // compare the order time between each event  
+            if (event.getTime() <= e.getTime()) {
+                events.add(index,event); // add event in Events List with the index
+                return; // event added, exit the loop
+            }
+            index++; // increasement the index
+        }
+         events.add(event); // the lasted event added at the end
+    }
+   
+
+}
