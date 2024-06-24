@@ -1,0 +1,36 @@
+import java.util.Random;
+
+/**
+ *
+ * @author 12248257
+ */
+public abstract class Event {
+    private int time;
+    private static Random generator = new Random(1);
+    
+    
+    
+    public abstract void process(ShopModel shopModel, IScheduler schedule);
+    
+    //constructor
+    public Event(int time){
+        this.time = time;
+         
+    }
+
+    /**
+     * @return the time
+     */
+    public int getTime() {
+        return time;
+    }
+    
+    
+    
+    public static Random getGenerator(){
+        return generator;
+    }
+        
+        
+    
+}
