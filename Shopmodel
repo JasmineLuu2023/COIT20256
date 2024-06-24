@@ -1,0 +1,128 @@
+import java.util.ArrayList;
+import java.util.Formatter;
+
+/**
+ *
+ * @author quyen
+ */
+public class ShopModel {
+
+    private ArrayList<CustomerGroup> groups;
+    private ArrayList<CustomerGroup> history;
+    private int nextId;
+    private int numGroups;
+    private int numSeat;
+    private int lostBusiness;
+    private int numServe;
+
+    // constructor
+    public ShopModel(int numSeat) {
+        groups = new ArrayList<>();
+        history = new ArrayList<>();
+        nextId = 0;
+        numGroups = 2;
+        this.numSeat = numSeat;
+    }
+
+    /**
+     * @return the nextId
+     */
+    public int getNextId() {
+        return nextId++;
+    }
+
+    // declare g avariabl with customerGroup type and add g customer into groupsList
+    public void addGroup(CustomerGroup g) {
+        groups.add(g);
+    }
+
+    // declare g avariabl with customerGroup type and add g customer into historyList
+    public void logGroup(CustomerGroup g) {
+        history.add(g);
+    }
+
+    public void showGroups(Formatter output) {
+        // print the header on the group List of customer in the shop in currently
+        //System.out.printf("%nThe following groups are in the shop:%n%n");
+
+        // enhances for loop to print the each current customer in the shop
+        for (CustomerGroup group : groups) {
+            //System.out.println(group);
+            if(output!=null){
+                
+                output.format("%s%n", group.toString());
+            }
+        }
+    }
+
+    public void showLog(Formatter output) {
+        // print the header on the group List of customers who have been in the shop
+        //System.out.printf("%nThe following groups are in the history/log:%n%n");
+
+        // enhances for loop to print the each customers who have been in the shop
+        for (CustomerGroup group : history) {
+            //System.out.println(group);
+            if(output!=null){
+                output.format("%s%n", group.toString());
+            }
+        }
+    }
+    
+    // keep track the number of customer and number of seat in the shop
+    public boolean canSeat(int time, CustomerGroup group) {
+              numSeat = 8;
+        // if number of customer is less than number of seat available, this group can enter the shop
+        if (numGroups <= numSeat) {
+                System.out.printf("t= %d: Group %d (%d people) seated%n", group.getArrivalTime(), group.getId(), group.getNumberInGroup());
+
+                numSeat = numSeat - group.getNumberInGroup(); // current number of seats are  available
+                numGroups = numGroups + group.getNumberInGroup(); // increasing the number of customers in the shop
+                
+                return true;
+                           } 
+        // otherwise the group had to leave the shop because there is insufficient seat
+        else {
+                System.out.printf("t= %d: Group %d leaves as there are insufficient seats for the group%n", group.getArrivalTime(), group.getId(), group.getNumberInGroup());
+                 lostBusiness = lostBusiness + group.getNumberInGroup();
+        }
+        return false; 
+    }
+    
+    /**
+     * @return the numServe
+     */
+    public int getNumServe() {
+        return numServe;
+    }
+   
+
+    // track the number of customers leave the shop because of insuffience seat
+    public int getLostBusiness() {
+        //System.out.printf("%nThe lost business: %d people%n", lostBusiness);
+        return lostBusiness;
+
+    }
+
+    // serveOrder method to print out to indicate the time and groupID served
+    public void serveOrder(int time, CustomerGroup g) {
+        System.out.printf("t = %d: Order served for Group %d%n", time, g.getId());
+        numServe = numServe + g.getNumberInGroup();
+    }
+
+    //a leave method to print out the time and groupId of the the Group leaving the shop
+    public void leave(int time, CustomerGroup g) {
+        System.out.printf("t = %d: Group %d leaves%n", time, g.getId());
+        groups.remove(g); // remove the g object when the group leaves the shop
+        numGroups = numGroups - g.getNumberInGroup(); // decrease the number of customers in the shop
+        // increase numbers of seat available after the group leaves the shop (by adding the number in group)
+        numSeat = numSeat + g.getNumberInGroup(); 
+    }
+
+    
+
+    
+    
+    
+  
+
+}
